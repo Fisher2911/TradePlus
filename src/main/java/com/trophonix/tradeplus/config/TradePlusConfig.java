@@ -5,7 +5,6 @@ import com.trophonix.tradeplus.util.ItemFactory;
 import com.trophonix.tradeplus.util.MsgUtils;
 import com.trophonix.tradeplus.util.Sounds;
 import lombok.Getter;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -97,6 +96,9 @@ public class TradePlusConfig {
 
   private boolean debugMode;
 
+  private boolean closeTradeOnDamage;
+  private boolean cancelMoveWhileTrading;
+
   private ConfigMessage requestSent;
   private ConfigMessage requestReceived;
 
@@ -166,6 +168,9 @@ public class TradePlusConfig {
     allowTradeInCreative = config.getBoolean("allow-trade-in-creative", false);
     allowShiftRightClick = config.getBoolean("allow-shift-right-click");
 
+    closeTradeOnDamage = config.getBoolean("close-trade-on-damage", true);
+    cancelMoveWhileTrading = config.getBoolean("cancel-move-while-trading", true);
+
     itemBlacklist = config.getStringList("blocked.blacklist");
     denyNamedItems = config.getBoolean("blocked.named-items", false);
     loreBlacklist = config.getStringList("blocked.lore");
@@ -211,7 +216,7 @@ public class TradePlusConfig {
         gui.getStringList("their-extra-slots").stream()
             .map(s -> Integer.valueOf(s))
             .collect(Collectors.toList());
-    
+
     extrasTypePrefix =
         MsgUtils.color(config.getString("extras.type.prefix", "&6&l!!&6> "));
     extrasTypeEmpty =
@@ -575,6 +580,9 @@ public class TradePlusConfig {
       config.set("requestcooldownseconds", 20);
       config.set("allow-trade-in-creative", false);
       config.set("allow-shift-right-click", true);
+
+      config.set("close-trade-on-damage", true);
+      config.set("cancel-move-while-trading", true);
 
       config.set("blocked.blacklist", Arrays.asList("bedrock", "monster_egg"));
       config.set("blocked.named-items", false);

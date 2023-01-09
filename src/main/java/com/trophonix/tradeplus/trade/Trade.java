@@ -17,6 +17,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.*;
 import org.bukkit.event.server.PluginDisableEvent;
@@ -524,6 +525,7 @@ public class Trade implements Listener {
   @EventHandler
   public void onMove(PlayerMoveEvent event) {
     if (cancelled || event.getTo() == null) return;
+    if (!pl.getTradeConfig().isCancelMoveWhileTrading()) return;
     Player player = event.getPlayer();
     if (player.equals(player1) || player.equals(player2)) {
       if (event.getFrom().distanceSquared(event.getTo()) < 0.01) return;
@@ -531,6 +533,16 @@ public class Trade implements Listener {
         return;
       }
       event.setCancelled(true);
+    }
+  }
+
+  @EventHandler
+  public void onDamage(EntityDamageEvent event) {
+    if (cancelled) return;
+    if (!pl.getTradeConfig().isCloseTradeOnDamage()) return;
+    if (!(event.getEntity() instanceof Player)) return;
+    if (event.getEntity().equals(player1) || event.getEntity().equals(player2)) {
+        ((Player) event.getEntity()).closeInventory();
     }
   }
 
@@ -994,7 +1006,7 @@ public class Trade implements Listener {
               && item.getItemMeta().hasDisplayName()) {
         return true;
       }
-      
+
       String regex = pl.getConfig().getString("blocked.regex", "");
       if (!regex.isEmpty()) {
         try {
